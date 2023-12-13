@@ -11,8 +11,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 
 const app = express();
 
-// CORS configuration
-const cors = require('cors');
+
 
 // CORS options
 const corsOptions = {
