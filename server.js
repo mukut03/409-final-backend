@@ -12,12 +12,18 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const app = express();
 
 // CORS configuration
+const cors = require('cors');
+
+// CORS options
 const corsOptions = {
-  origin: 'https://master.d6p7j374mygn4.amplifyapp.com', 
-  optionsSuccessStatus: 200, 
+  origin: 'https://master.d6p7j374mygn4.amplifyapp.com', // Update with your frontend's URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
+
 app.use(express.json({ limit: '10mb' })); // Increase the limit
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -31,7 +37,10 @@ AWS.config.update({
     region: 'YOUR_REGION',
   });
   
-const s3 = new AWS.S3();
+  const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+  })
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
