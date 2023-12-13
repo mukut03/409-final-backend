@@ -23,7 +23,13 @@ require('dotenv').config();
 const AWS = require('aws-sdk');
 
 
-AWS.config.update({ region: process.env.AWS_REGION || 'us-east-2' });
+AWS.config.update({
+    accessKeyId: 'YOUR_ACCESS_KEY_ID',
+    secretAccessKey: 'YOUR_SECRET_ACCESS_KEY',
+    region: 'YOUR_REGION',
+  });
+  
+const s3 = new AWS.S3();
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
@@ -249,6 +255,47 @@ app.post('/save-collage', async (req, res) => {
       res.status(500).send('Error retrieving collages from the database.');
     }
   });
+
+  app.post('/upload-collage', async (req, res) => {
+    const { imageBase64, userId, playlistId, playlistName } = req.body;
+
+    const buffer = Buffer.from(imageBase64, 'base64');
+
+    // Generate a unique file name
+    const fileName = `collages/${uuidv4()}.jpeg`;
+
+    const s3Params = {
+        Bucket: 'collage-images-409',
+        Key: fileName,
+        Body: buffer,
+        ContentType: 'image/jpeg',
+        ACL: 'public-read', // Make sure the file is publicly accessible
+    };
+
+    try {
+        const uploadResult = await s3.upload(s3Params).promise();
+
+        // Save the URL in DynamoDB
+        const dynamoParams = {
+            TableName: '409-final-collage',
+            Item: {
+                user_id: `public#${userId}`,
+                playlist_id: playlistId,
+                image_url: uploadResult.Location,
+                playlist_name: playlistName,
+                created_at: new Date().toISOString(),
+            },
+        };
+
+        await ddb.put(dynamoParams).promise();
+
+        res.json({ message: 'Collage uploaded and saved successfully.' });
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).send('Error uploading collage.');
+    }
+});
+
   
 
   
