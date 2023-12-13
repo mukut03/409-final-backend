@@ -9,13 +9,11 @@ const SpotifyWebApi = require('spotify-web-api-node');
 
 const app = express();
 
+require('dotenv').config();
 const AWS = require('aws-sdk');
 
-// // Configure the AWS region
-// AWS.config.update({
-//   region: 'us-east-2', 
-  
-// });
+
+AWS.config.update({ region: process.env.AWS_REGION || 'us-east-2' });
 
 const ddb = new AWS.DynamoDB.DocumentClient();
 
@@ -236,8 +234,8 @@ app.post('/save-collage', async (req, res) => {
 
   
 
-// Start the server
-// const PORT = process.env.PORT || 3001;
-// app.listen(PORT, () => {
-//     console.log(`Server listening on port ${PORT}`);
-// });
+//Start the server
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+});
