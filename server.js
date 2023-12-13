@@ -7,7 +7,7 @@ const SpotifyStrategy = require('passport-spotify').Strategy;
 const SpotifyWebApi = require('spotify-web-api-node');
 
 
-const cors = require('cors');
+
 
 const app = express();
 
