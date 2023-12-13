@@ -9,13 +9,23 @@ const SpotifyWebApi = require('spotify-web-api-node');
 
 const app = express();
 
+const AWS = require('aws-sdk');
+
+// Configure the AWS region
+AWS.config.update({
+  region: 'us-east-2', 
+  
+});
+
+const ddb = new AWS.DynamoDB.DocumentClient();
+
 // Middleware setup
 app.use(cors());
 app.use(express.json());
 
 // Session configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your_session_secret', // Use a secure and unique secret
+    secret: process.env.SESSION_SECRET || 'your_session_secret', 
     resave: false,
     saveUninitialized: false
 }));
@@ -62,7 +72,7 @@ app.get('/callback', passport.authenticate('spotify', { failureRedirect: '/login
     (req, res) => {
         // Successful authentication, redirect home or to another page
         console.log('Succesful authentication')
-        res.redirect('/'); // Redirect to the frontend URL where you handle post-login
+        res.redirect('http://localhost:3000/home'); // Redirect to the frontend URL & handle post-login
     }
 );
 
@@ -80,7 +90,7 @@ app.get('/playlists', (req, res) => { // user interaction 1
             // Logging playlist names to the console
             console.log("User's Playlists:", playlistNames);
 
-            // Sending back the full data to the frontend (or you can just send the names)
+            // Sending back the full data to the frontend (or just send the names)
             res.json(data.body);
         })
         .catch(err => {
@@ -97,7 +107,7 @@ app.get('/search-playlists', (req, res) => { // user interaction 2
 
     spotifyApi.searchPlaylists(query)
         .then(data => {
-            res.json(data.body.playlists.items);  // You can modify the response as needed
+            res.json(data.body.playlists.items);  
         })
         .catch(err => {
             res.status(400).send(`Error searching playlists: ${err}`);
@@ -111,9 +121,9 @@ app.post('/select-playlist', (req, res) => { // user interaction 3
         return res.status(400).send('Playlist ID is required');
     }
 
-    // Here, you can handle the playlist selection, e.g., fetching tracks, storing the ID, etc.
+    // can handle the playlist selection, e.g., fetching tracks, storing the ID, etc.
     console.log(`Playlist selected: ${playlistId}`);
-    // For example, you could store the playlist ID in a variable or a database
+    // could store the playlist ID in DynamoDB
     // and then use it to fetch the tracks or for other processing.
 
     res.send(`Playlist ${playlistId} selected`);
@@ -173,6 +183,58 @@ app.post('/follow-playlist', (req, res) => { // user interaction 5
         });
 });
 
+//database endpoints
+
+app.post('/save-collage', async (req, res) => {
+    const { userId, collageId, imageUrl, playlistName } = req.body;
+  
+    // Prefix the userId with 'public#'
+    const prefixedUserId = `public#${userId}`;
+  
+    // Define the DynamoDB put parameters
+    const params = {
+      TableName: '409-final-collage', // Replace with your DynamoDB table name
+      Item: {
+        user_id: prefixedUserId,
+        playlist_id: collageId,
+        image_url: imageUrl,
+        playlist_name: playlistName,
+        created_at: new Date().toISOString()
+      }
+    };
+  
+    // Insert the item into the DynamoDB table
+    try {
+      await ddb.put(params).promise();
+      res.json({ message: 'Collage saved successfully.' });
+    } catch (err) {
+      console.error('Error saving collage:', err);
+      res.status(500).send('Error saving collage to the database.');
+    }
+  });
+
+  app.get('/get-collages', async (req, res) => {
+    // Define the DynamoDB scan parameters
+    const params = {
+      TableName: '409-final-collage', // Replace with your DynamoDB table name
+      FilterExpression: 'begins_with(user_id, :prefix)',
+      ExpressionAttributeValues: {
+        ':prefix': 'public#'
+      }
+    };
+  
+    // Scan the table for items with user_id that begins with 'public#'
+    try {
+      const data = await ddb.scan(params).promise();
+      res.json(data.Items);
+    } catch (err) {
+      console.error('Error retrieving collages:', err);
+      res.status(500).send('Error retrieving collages from the database.');
+    }
+  });
+  
+
+  
 
 // Start the server
 const PORT = process.env.PORT || 3001;
