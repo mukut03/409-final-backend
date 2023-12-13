@@ -202,7 +202,7 @@ app.post('/save-collage', async (req, res) => {
         TableName: '409-final-collage',
         Item: {
             user_id: prefixedUserId,
-            playlist_id: playlistId,
+            playlist_id: collageID,
             image_url: imageUrl, // This is now the base64 string
             playlist_name: playlistName,
             created_at: new Date().toISOString()
