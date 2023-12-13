@@ -185,6 +185,8 @@ app.post('/follow-playlist', (req, res) => { // user interaction 5
 
 app.post('/save-collage', async (req, res) => {
     const { userId, collageId, imageUrl, playlistName } = req.body;
+
+    console.log("body", req.body);
   
     // Convert values to strings
     const stringUserId = String(userId);
