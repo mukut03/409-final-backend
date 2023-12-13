@@ -267,7 +267,7 @@ app.post('/save-collage', async (req, res) => {
   });
 
   app.post('/upload-collage', async (req, res) => {
-    res.header('Access-Control-Allow-Origin', 'https://master.d6p7j374mygn4.amplifyapp.com');
+    
     const { imageBase64, userId, playlistId, playlistName } = req.body;
 
     const buffer = Buffer.from(imageBase64, 'base64');
