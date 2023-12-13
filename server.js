@@ -186,20 +186,23 @@ app.post('/follow-playlist', (req, res) => { // user interaction 5
 app.post('/save-collage', async (req, res) => {
     const { userId, collageId, imageUrl, playlistName } = req.body;
   
+    // Convert values to strings
     const stringUserId = String(userId);
     const stringCollageId = String(collageId);
-    
+    const stringImageUrl = String(imageUrl);
+    const stringPlaylistName = String(playlistName);
+
     // Prefix the userId with 'public#'
-    const prefixedUserId = `public#${userId}`;
+    const prefixedUserId = `public#${stringUserId}`;
   
     // Define the DynamoDB put parameters
     const params = {
       TableName: '409-final-collage', 
       Item: {
         user_id: prefixedUserId,
-        playlist_id: collageId,
-        image_url: imageUrl,
-        playlist_name: playlistName,
+        playlist_id: stringCollageId,
+        image_url: stringImageUrl,
+        playlist_name: stringPlaylistName,
         created_at: new Date().toISOString()
       }
     };
@@ -212,7 +215,8 @@ app.post('/save-collage', async (req, res) => {
       console.error('Error saving collage:', err);
       res.status(500).send('Error saving collage to the database.');
     }
-  });
+});
+
 
   app.get('/get-collages', async (req, res) => {
     // Define the DynamoDB scan parameters
