@@ -191,8 +191,8 @@ app.post('/save-collage', async (req, res) => {
     // Convert values to strings
     const stringUserId = String(userId);
     const stringCollageId = String(collageId);
-    const stringImageUrl = String(imageUrl);
-    const stringPlaylistName = String(playlistName);
+    
+
 
     // Prefix the userId with 'public#'
     const prefixedUserId = `public#${stringUserId}`;
@@ -202,7 +202,7 @@ app.post('/save-collage', async (req, res) => {
         TableName: '409-final-collage',
         Item: {
             user_id: prefixedUserId,
-            playlist_id: collageID,
+            playlist_id: stringCollageId,
             image_url: imageUrl, // This is now the base64 string
             playlist_name: playlistName,
             created_at: new Date().toISOString()
