@@ -70,7 +70,7 @@ app.get('/callback', passport.authenticate('spotify', { failureRedirect: '/login
     (req, res) => {
         // Successful authentication, redirect home or to another page
         console.log('Succesful authentication')
-        res.redirect('http://localhost:3000/home'); // Redirect to the frontend URL & handle post-login
+        res.redirect('https://master.d6p7j374mygn4.amplifyapp.com/home'); // Redirect to the frontend URL & handle post-login
     }
 );
 
