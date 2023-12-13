@@ -9,18 +9,15 @@ const SpotifyWebApi = require('spotify-web-api-node');
 
 
 
-const cors = require('cors');
+const app = express();
 
-// CORS options
+// CORS configuration
 const corsOptions = {
-  origin: 'https://master.d6p7j374mygn4.amplifyapp.com', // Frontend URL
-  optionsSuccessStatus: 200,
+  origin: 'https://master.d6p7j374mygn4.amplifyapp.com', 
+  optionsSuccessStatus: 200, 
 };
 
 app.use(cors(corsOptions));
-
-app.use(express.json({ limit: '10mb' })); // Increase the limit
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 require('dotenv').config();
 const AWS = require('aws-sdk');
