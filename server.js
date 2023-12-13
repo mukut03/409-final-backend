@@ -148,7 +148,7 @@ app.get('/playlist-tracks/:playlistId', (req, res) => { // user interaction 3
 
 app.post('/set-playlist-image/:playlistId', (req, res) => { // user interaction 4
     const playlistId = req.params.playlistId;
-    const { imageBase64 } = req.body; // Assuming the image is sent as a base64 encoded string
+    const { imageBase64 } = req.body; 
 
     if (!playlistId || !imageBase64) {
         return res.status(400).send('Playlist ID and image data are required');
@@ -186,12 +186,15 @@ app.post('/follow-playlist', (req, res) => { // user interaction 5
 app.post('/save-collage', async (req, res) => {
     const { userId, collageId, imageUrl, playlistName } = req.body;
   
+    const stringUserId = String(userId);
+    const stringCollageId = String(collageId);
+    
     // Prefix the userId with 'public#'
     const prefixedUserId = `public#${userId}`;
   
     // Define the DynamoDB put parameters
     const params = {
-      TableName: '409-final-collage', // Replace with your DynamoDB table name
+      TableName: '409-final-collage', 
       Item: {
         user_id: prefixedUserId,
         playlist_id: collageId,
