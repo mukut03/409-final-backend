@@ -288,7 +288,7 @@ app.post('/save-collage', async (req, res) => {
 
         // Save the URL in DynamoDB
         const dynamoParams = {
-            TableName: 'amplify-amplify8d3632b6c5a44-staging-70840-deployment',
+            TableName: '409-final-collage',
             Item: {
                 user_id: `public#${userId}`,
                 playlist_id: playlistId,
