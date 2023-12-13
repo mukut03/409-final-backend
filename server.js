@@ -7,7 +7,17 @@ const SpotifyStrategy = require('passport-spotify').Strategy;
 const SpotifyWebApi = require('spotify-web-api-node');
 
 
+const cors = require('cors');
+
 const app = express();
+
+// CORS configuration
+const corsOptions = {
+  origin: 'https://master.d6p7j374mygn4.amplifyapp.com', 
+  optionsSuccessStatus: 200, 
+};
+
+app.use(cors(corsOptions));
 
 require('dotenv').config();
 const AWS = require('aws-sdk');
