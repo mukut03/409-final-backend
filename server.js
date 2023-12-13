@@ -199,14 +199,14 @@ app.post('/save-collage', async (req, res) => {
   
     // Define the DynamoDB put parameters
     const params = {
-      TableName: '409-final-collage', 
-      Item: {
-        user_id: prefixedUserId,
-        playlist_id: stringCollageId,
-        image_url: stringImageUrl,
-        playlist_name: stringPlaylistName,
-        created_at: new Date().toISOString()
-      }
+        TableName: '409-final-collage',
+        Item: {
+            user_id: prefixedUserId,
+            playlist_id: playlistId,
+            image_url: imageUrl, // This is now the base64 string
+            playlist_name: playlistName,
+            created_at: new Date().toISOString()
+        }
     };
   
     // Insert the item into the DynamoDB table
