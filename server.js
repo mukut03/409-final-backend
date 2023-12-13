@@ -19,6 +19,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use(express.json({ limit: '10mb' })); // Increase the limit as needed
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 require('dotenv').config();
 const AWS = require('aws-sdk');
 
